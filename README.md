@@ -24,21 +24,19 @@ Specifically, the goals of the proposed scheduler plugin is to
 
 Sakkara places groups of pods, satisfying specified topological constraints, on a cluster hierarchical topology.
 
-[Slides](docs/sakkara-chic-sched.pdf)
-
 ### User Stories
 
-We provide two user stories.
-
-#### Story 1
-
-Consider a cluster ...
-
-#### Story 2
-
-Consider a cluster ...
-
 ### Examples
+
+![topology](images/example/topology.png)
+
+![group](images/example/group.png)
+
+![placement](images/example/placement.png)
+
+![result-group](images/example/result-group.png)
+
+![result-pod](images/example/result-pod.png)
 
 ### Notes/Constraints/Caveats
 
@@ -46,7 +44,9 @@ Consider a cluster ...
 
 ## Design Details
 
-![plugin state transitions](images/state-tansitions.png)
+![architecture](images/architecture.png)
+
+![plugin state transitions](images/state-transitions.png)
 
 ### Cluster topology
 
