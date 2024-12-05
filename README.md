@@ -2,29 +2,62 @@
 
 ## Summary
 
-Sakkara places all pods in a group based on a rich set of topological constraints, given a hierarchical cluster topology. The resulting logical application topology is made available to the group for initial configuration that helps improve its running performance and cluster utilization. Topological constraints, such as pack, spread, partition, range, and factor policies, can be specified at any level of the topology, and each level can satisfy a different policy. This way, Sakkara can accommodate a flexible set of application-specific logical topologies. A unique feature is the support of priorities where jobs may be preempted as gangs. Sakkara employs a solver which uses the chic-sched algorithm to find a placement solution for the entire group, satisfying the group topological constraints.
+The goal of this scheduler plugin is to place a group of pods according to topological constraints in a cluster with a tree topology.
+The nodes in the cluster make up the leaves of the tree and the levels in the tree represent a hierarchy, such as nodes, servers, racks, rows, zones, and so on, up to the (logical) root of the tree.
+The group to be placed consists of a set of homogeneous pods, with respect to their resource requirements and other scheduling constraints, typically specified in a pod template.
+A group, also referred to as a placement group, may constitute an application or a job that needs to be placed with some topological constraints in the cluster.
+The notion of a placement group existed for HPC and AI/ML workloads, where the members of the group are VMs that are placed in a datacenter according to specified placement strategies (e.g., [AWS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html), [Azure](https://learn.microsoft.com/en-us/azure/virtual-machines/co-location), [IBM](https://cloud.ibm.com/docs/vpc?topic=vpc-about-placement-groups-for-vpc), [Oracle](https://docs.oracle.com/en-us/iaas/Content/cluster-placement-groups/overview.htm)).
+Depending on the interactions among the members of a group, and other factors such as availability, the application performance highly depends on how the members are placed in the datacenter topology.
+
+Inspired by the simple hierarchical topology, step pyramid structure, this scheduler plugin is named [Sakkara](https://en.wikipedia.org/wiki/Saqqara).
+Sakkara places all pods in a group based on a rich set of topological constraints, given a hierarchical cluster topology.
+Topological constraints, such as pack, spread, partition, range, and factor policies, can be specified at any level of the topology, and each level can satisfy a different policy.
+This way, Sakkara can accommodate a flexible set of application-specific logical topologies.
+The resulting logical application topology is made available to the group for initial configuration that helps improve its running performance and cluster utilization.
+A unique feature is the support of priorities where jobs may be preempted as gangs.
+Sakkara employs an open-source solver which uses the [chic-sched](https://github.com/ibm/chic-sched) algorithm to find a placement solution for the entire group, satisfying the group topological constraints. (other solvers may be substituted.)
 
 ## Motivation
 
-Topology-Aware Workload Placement
+A requirement for long running jobs with a specific pattern of interaction among its component pods is topology-aware scheduling of the pods, given a cluster topology.
+Existing solutions are as follows.
 
-Placing a workload impacts its performance
+- [node resource topology](https://github.com/kubernetes-sigs/scheduler-plugins/tree/master/pkg/noderesourcetopology): concerned about the connectivity of resources within a node
+- [coscheduling](https://github.com/kubernetes-sigs/scheduler-plugins/tree/master/pkg/coscheduling): group placement without topology awareness, nor group preemption
+- [pod topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/): a very narrow form of topology constraint of a single pod
 
-Need to place group holistically, accounting for resource requirements and topology constraints
+Lacking is a scheduler that is both topology-aware at the cluster level, with a set of rich topological constraints, and places/preempts whole groups.
 
 ### Goals
 
-Specifically, the goals of the proposed scheduler plugin is to
-
-- place a group of pods in a cluster with a given tree topology, satisfying group placement constraints at all levels of the hierarchy
+Develop a scheduler plugin which places a group of pods in a cluster with a given tree topology, satisfying group placement constraints at all levels of the hierarchy.
 
 ### Non-Goals
+
+- Migration of pods
+- Elastic groups with changing size
 
 ## Proposal
 
 Sakkara places groups of pods, satisfying specified topological constraints, on a cluster hierarchical topology.
 
 ### User Stories
+
+1- **User A:**
+
+Want to deploy a job with 8 pods, equally partitioned into two partitions, where each partition is placed in separate rack, and the pods belonging to a partition are packed on nodes within the rack. Partitioning improves availability, and packing improves performance.
+
+![before-1](images/use-cases/before-1.png)
+
+![after-1](images/use-cases/after-1.png)
+
+2- **User B:**
+
+Want to place a job with 6 pods packed on same physical server, as much as possible, where pods on the same server are spread across nodes in that server, but in the range [2,4]. Having all pods on the same physical server improves communication among the pods. And, having less than 2 pods in a node spreads the pods too thinly, and having more than 4 may leads to congestion.
+
+![before-2](images/use-cases/before-2.png)
+
+![after-2](images/use-cases/after-2.png)
 
 ### Examples
 
@@ -37,6 +70,12 @@ Sakkara places groups of pods, satisfying specified topological constraints, on 
 ![result-group](images/example/result-group.png)
 
 ![result-pod](images/example/result-pod.png)
+
+![premption before](images/preemption/before.png)
+
+![premption after-1](images/preemption/after-1.png)
+
+![premption after-2](images/preemption/after-2.png)
 
 ### Notes/Constraints/Caveats
 
