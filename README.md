@@ -15,7 +15,7 @@ Topological constraints, such as pack, spread, partition, range, and factor poli
 This way, Sakkara can accommodate a flexible set of application-specific logical topologies.
 The resulting logical application topology is made available to the group for initial configuration that helps improve its running performance and cluster utilization.
 A unique feature is the support of priorities where jobs may be preempted as gangs.
-Sakkara employs an open-source solver which uses the [chic-sched](https://github.com/ibm/chic-sched) algorithm to find a placement solution for the entire group, satisfying the group topological constraints. (other solvers may be substituted.)
+Sakkara employs an open-source solver which uses the [chic-sched](https://github.com/ibm/chic-sched) algorithm to find a placement solution for the entire group, satisfying the group topological constraints. (Other solvers may be substituted.)
 
 ## Motivation
 
@@ -38,8 +38,6 @@ Develop a scheduler plugin which places a group of pods in a cluster with a give
 - Elastic groups with changing size
 
 ## Proposal
-
-Sakkara places groups of pods, satisfying specified topological constraints, on a cluster hierarchical topology.
 
 ### User Stories
 
@@ -487,7 +485,7 @@ Unit tests and Integration tests will be added.
 
 ### Dependencies
 
-Metric providers such as Prometheus, Kubernetes Metrics Server, and Signal FX.
+Solver such as the open source [chic-sched](https://github.com/ibm/chic-sched).
 
 ### Scalability
 
