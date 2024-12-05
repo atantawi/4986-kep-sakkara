@@ -1,4 +1,4 @@
-# KEP-4986: Sakkara - Hierarchical Cluster Topology Group Scheduler Plugin
+# KEP-4986: Sakkara - A Hierarchical Cluster Topology Group Scheduler Plugin
 
 ## Summary
 
