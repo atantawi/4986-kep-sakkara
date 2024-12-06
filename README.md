@@ -15,7 +15,7 @@ Topological constraints, such as pack, spread, partition, range, and factor poli
 This way, Sakkara can accommodate a flexible set of application-specific logical topologies.
 The resulting logical application topology is made available to the group for initial configuration that helps improve its running performance and cluster utilization.
 A unique feature is the support of priorities where jobs may be preempted as gangs.
-Sakkara employs an open-source solver which uses the [chic-sched](https://github.com/ibm/chic-sched) algorithm to find a placement solution for the entire group, satisfying the group topological constraints. (Other solvers may be substituted.)
+Sakkara employs an open-source solver which uses the [chic-sched](https://github.com/ibm/chic-sched) algorithm to find a placement solution for the entire group, satisfying the group topological constraints. (Other solvers may be integrated.)
 
 ## Motivation
 
@@ -26,11 +26,11 @@ Existing solutions are as follows.
 - [coscheduling](https://github.com/kubernetes-sigs/scheduler-plugins/tree/master/pkg/coscheduling): group placement without topology awareness, nor group preemption
 - [pod topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/): a very narrow form of topology constraint of a single pod
 
-Lacking is a scheduler that is both topology-aware at the cluster level, with a set of rich topological constraints, and places/preempts whole groups.
+Though, a scheduler plugin that is both topology-aware at the cluster level, with a set of rich topological constraints, and places/preempts whole groups is currently not available.
 
 ### Goals
 
-Develop a scheduler plugin which places a group of pods in a cluster with a given tree topology, satisfying group placement constraints at all levels of the hierarchy.
+Develop a scheduler plugin (Sakkara) which places a group of pods in a cluster with a given tree topology, satisfying group placement constraints at all levels of the hierarchy.
 
 ### Non-Goals
 
@@ -43,7 +43,7 @@ Develop a scheduler plugin which places a group of pods in a cluster with a give
 
 1- **User A:**
 
-Want to deploy a job with 8 pods, equally partitioned into two partitions, where each partition is placed in separate rack, and the pods belonging to a partition are packed on nodes within the rack. Partitioning improves availability, and packing improves performance.
+Want to deploy a job with 8 pods, equally partitioned into two partitions, where each partition is placed in separate rack, and the pods belonging to a partition are packed on nodes within the rack. Partitioning improves availability, and packing typically improves performance.
 
 ![before-1](images/use-cases/before-1.png)
 
