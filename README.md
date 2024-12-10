@@ -34,6 +34,7 @@ Develop a scheduler plugin which places a group of pods in a cluster with a give
 
 ### Non-Goals
 
+- Discovery of cluster topology
 - Migration of pods
 - Elastic groups with changing size
 
@@ -485,7 +486,8 @@ Unit tests and Integration tests will be added.
 
 ### Dependencies
 
-Solver such as the open source [chic-sched](https://github.com/ibm/chic-sched).
+- Availability of cluster topology though an administrator, a topology controller, and/or a topology discovery tool.
+- Solver such as the open source [chic-sched](https://github.com/ibm/chic-sched).
 
 ### Scalability
 
